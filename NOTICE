@@ -1,0 +1,5 @@
+VideoGameBench Replayers
+Extracted from the VideoGameBench adapter in harbor-framework/adapters (Apache-2.0).
+Includes the Game Boy and DOS recording/replay runtime and regression tests.
+The upstream VideoGameBench engine, licensed games, emulator CDN assets, and recordings
+are external inputs. Their source and ownership are not transferred by this repository.

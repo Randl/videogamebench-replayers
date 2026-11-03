@@ -1,0 +1,27 @@
+[project]
+name = "videogamebench-replayers"
+version = "0.1.0"
+description = "Standalone Game Boy and DOS browser recorders and reproducible replayers"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+dependencies = ["PyYAML==6.0.3"]
+
+[project.optional-dependencies]
+runtime = ["numpy", "pyboy==2.6.1", "pygame", "Pillow==12.0.0", "ImageHash==4.3.2", "pydantic", "tqdm", "rich", "gymnasium", "opencv-python-headless", "openai", "anthropic", "playwright", "litellm", "python-dotenv"]
+
+[project.scripts]
+vgb-replayers = "videogamebench_replayers.cli:main"
+
+[dependency-groups]
+dev = ["pytest==9.1.1", "ruff==0.17.1", "Pillow==12.0.0", "ImageHash==4.3.2", "pyboy==2.6.1"]
+
+[build-system]
+requires = ["uv_build>=0.11.19,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "videogamebench_replayers"
+
+[tool.ruff]
+line-length = 88
