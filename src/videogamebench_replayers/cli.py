@@ -6,6 +6,8 @@ import sys
 from pathlib import Path
 
 SCRIPTS = {
+    "compare-dos": "compare_dos_snapshots.py",
+    "export-recording": "export_recording.py",
     "serve": "server.py",
     "actions": "play.py",
     "replay-dos": "replay_execution.py",

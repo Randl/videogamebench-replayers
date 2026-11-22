@@ -164,3 +164,5 @@ uv build
 This repository contains code, UI assets, and tests. Licensed ROMs, DOS bundles,
 CDN caches, credentials, and personal recordings remain external. See `NOTICE`,
 `LICENSE`, and `provenance.json` for the extraction provenance.
+
+Use `vgb-replayers export-recording --state-dir STATE --output DIRECTORY` to export the retained actions and observations. Use `vgb-replayers compare-dos LEFT.gz RIGHT.gz` to compare two exported DOS snapshots.
