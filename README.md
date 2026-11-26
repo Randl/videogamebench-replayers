@@ -166,3 +166,33 @@ CDN caches, credentials, and personal recordings remain external. See `NOTICE`,
 `LICENSE`, and `provenance.json` for the extraction provenance.
 
 Use `vgb-replayers export-recording --state-dir STATE --output DIRECTORY` to export the retained actions and observations. Use `vgb-replayers compare-dos LEFT.gz RIGHT.gz` to compare two exported DOS snapshots.
+
+
+For action replays, `vgb-replayers actions --replay actions.json --replay-timing recorded
+--visual-checks checks.json` checks the live screenshot before specified inputs.
+When a recorded order would reach the wrong selected unit, a version 2
+`substitute_if_match` check can supply one alternative DOS input for that
+step. For example, a move to the same pointer position leaves a mistakenly
+selected unit's previous order active. The log identifies each substitution.
+The original input runs when the reference is absent.
+
+A version 2 check can set `shift_schedule: false` to use the time between
+recorded inputs for observation and recovery. Future actions then retain their
+original deadlines. The default shifts them by the duration of each check.
+
+For a missed click with several observed alternative positions, a version 2
+check can set `retry_sequences` to one sequence of ordinary actions per retry.
+Set `retry_actions` to an empty list and `max_retries` to the number of sequences.
+The replayer checks the screen between sequences and stops retrying when it matches.
+
+Version 2 check files can specify `match_positions`, a list of screen coordinates
+such as `[[85, 143], [132, 143]]`. The reference is still extracted from `crop`.
+The check passes if that patch matches at any listed position, which supports
+units whose portraits move when the selected party changes. The check log records
+the closest position and its mean pixel error. For a recorded click on a
+moving target, `aim_at_match: true` moves the pointer to the center of a
+matching patch before the next input. When every location misses the threshold,
+the click uses the original pointer position. A version 2 check can also use
+`skip_if` with a second `crop` in the same reference image and its own
+`max_mean_error`. For example, a visible victory dialog can satisfy a check
+for a command that only applies during gameplay.

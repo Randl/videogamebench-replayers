@@ -50,9 +50,7 @@ def main():
     )
     parser.add_argument("--screen", type=Path, default=Path("screen.png"))
     parser.add_argument("--visual-checks", type=Path)
-    parser.add_argument(
-        "--check-log", type=Path, default=Path("visual-checks.jsonl")
-    )
+    parser.add_argument("--check-log", type=Path, default=Path("visual-checks.jsonl"))
     parser.add_argument(
         "--replay-timing", choices=["immediate", "recorded"], default="immediate"
     )
@@ -155,6 +153,7 @@ def main():
             nonlocal schedule_shift
             if checks is None:
                 return
+            replacement = None
             for check in checks.at(before_action):
                 checked_at = time.monotonic()
                 if "at_elapsed_sec" in check:
@@ -168,13 +167,17 @@ def main():
                         )
                     )
                 try:
-                    checks.run(check, call)
+                    candidate = checks.run(check, call)
+                    if candidate is not None:
+                        replacement = candidate
                 except Exception:
                     call("/finish", {})
                     raise
                 # Recovery is part of the oracle policy. Keep subsequent
                 # recorded input gaps instead of compressing overdue actions.
-                schedule_shift += time.monotonic() - checked_at
+                if check.get("shift_schedule", True):
+                    schedule_shift += time.monotonic() - checked_at
+            return replacement
 
         print(
             f"Replaying {total} actions from a fresh game…", file=sys.stderr, flush=True
@@ -188,7 +191,9 @@ def main():
                 not server_scheduled or (checks is not None and checks.at(index))
             ):
                 time.sleep(delay)
-            run_checks(index)
+            replacement = run_checks(index)
+            if replacement is not None:
+                action = replacement
             endpoint = "/scheduled-action" if server_scheduled else "/action"
             payload = (
                 {
